@@ -8,49 +8,44 @@ PyObjectId = Annotated[str, BeforeValidator(str)]
 class UserModel(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
     fullname: str = Field(...)
+    username: str = Field(..., min_length=3, max_length=15)
     email: str = Field(...)
-    password1: str = Field(...)
-    password2: str = Field(...)
-    model_config = ConfigDict(
-        populate_by_name=True, arbitrary_types_allowed=True, json_schema_extra={
-            "example": {
-                "fullname": "Tom Jones",
-                "email": "test@test.com",
-                "password1": "password",
-                "password2": "password"
-            }
-        }
-    )
+    password: str = Field(...)
+    # password2: str = Field(...)
+    # model_config = ConfigDict(
+    #     populate_by_name=True, arbitrary_types_allowed=True, json_schema_extra={
+    #         "example": {
+    #             "fullname": "Tom Jones",
+    #             "email": "test@test.com",
+    #             "password1": "password",
+    #             "password2": "password"
+    #         }
+    #     }
+    # )
 
 
-class UpdateUser(BaseModel):
-    fullname: str = Field(...)
-    email: str = Field(...)
-    password1: str = Field(...)
-    password2: str = Field(...)
-    model_config = ConfigDict(
-        populate_by_name=True, arbitrary_types_allowed=True, json_schema_extra={
-            "example": {
-                "fullname": "Tom Jones",
-                "email": "test@test.com",
-                "password1": "password",
-                "password2": "password"
-            }
-        }
-    )
+class UserLogin(BaseModel):
+    username: str = Field(...)
+    password: str = Field(...)
 
 
-class ListUsers(BaseModel):
-    users: List[UserModel]
+class CurrentUserModel(BaseModel):
+    id: PyObjectId = Field(alias="_id", default=None)
+    username: str = Field(..., min_length=3, max_length=15)
+
+
+# class ListUsers(BaseModel):
+#     users: List[UserModel]
 
 
 class TransactionModel(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
     type: str = Field(...)
-    amount: int = Field(..., gt=0, lt=100000)
+    amount: float = Field(..., gt=0, lt=100000)
     category: str = Field(...)
     date: str
     description: str
+    user_id: str = Field(...)
 
     @field_validator("category")
     def check_category_case(cls, v: str) -> str:

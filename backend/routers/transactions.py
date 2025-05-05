@@ -1,15 +1,25 @@
 from bson import ObjectId
-from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Body, Depends, Form, HTTPException, Request, status
 from fastapi.responses import Response
 from pymongo import ReturnDocument
 from models import TransactionModel, ListTransactions, UpdateTransactionModel, TransactionCollectionPagination
+from authentication import AuthHandler
 
 router = APIRouter()
 TRANSACTIONS_PER_PAGE = 10
+auth_handler = AuthHandler()
 
 
 @router.post("/", response_description="Add a transaction", response_model=TransactionModel, status_code=status.HTTP_201_CREATED, response_model_by_alias=False)
-async def add_transaction(request: Request, transaction: TransactionModel = Body(...)):
+async def add_transaction(request: Request, type: str = Form("type"), amount: float = Form("amount"), category: str = Form("category"), date: str = Form("date"), description: str = Form("description"), user: str = Depends(auth_handler.auth_wrapper),):
+    transaction = TransactionModel(
+        type=type,
+        amount=amount,
+        category=category,
+        date=date,
+        description=description,
+        user_id=user["user_id"],
+    )
     transactions = request.app.db["transactions"]
     document = transaction.model_dump(by_alias=True, exclude=["id"])
     inserted = await transactions.insert_one(document)

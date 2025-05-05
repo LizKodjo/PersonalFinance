@@ -4,6 +4,8 @@ from motor import motor_asyncio
 import uvicorn
 from config import BaseConfig
 from routers.transactions import router as transactions_router
+from routers.users import router as users_router
+from fastapi.middleware.cors import CORSMiddleware
 
 settings = BaseConfig()
 
@@ -22,8 +24,15 @@ async def lifespan(app: FastAPI):
     app.client.close()
 
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"])
 app.include_router(transactions_router,
                    prefix="/transactions", tags=["transactions"])
+app.include_router(users_router, prefix="/users", tags=["users"])
 
 
 @app.get("/")
