@@ -11,17 +11,6 @@ class UserModel(BaseModel):
     username: str = Field(..., min_length=3, max_length=15)
     email: str = Field(...)
     password: str = Field(...)
-    # password2: str = Field(...)
-    # model_config = ConfigDict(
-    #     populate_by_name=True, arbitrary_types_allowed=True, json_schema_extra={
-    #         "example": {
-    #             "fullname": "Tom Jones",
-    #             "email": "test@test.com",
-    #             "password1": "password",
-    #             "password2": "password"
-    #         }
-    #     }
-    # )
 
 
 class UserLogin(BaseModel):
@@ -51,17 +40,17 @@ class TransactionModel(BaseModel):
     def check_category_case(cls, v: str) -> str:
         return v.title()
 
-    model_config = ConfigDict(
-        populate_by_name=True, arbitrary_types_allowed=True, json_schema_extra={
-            "example": {
-                "type": "Incoming",
-                "amount": 100.00,
-                "category": "Food",
-                "date": "3/5/2025",
-                "description": "Hello testing"
-            }
-        }
-    )
+    # model_config = ConfigDict(
+    #     populate_by_name=True, arbitrary_types_allowed=True, json_schema_extra={
+    #         "example": {
+    #             "type": "Incoming",
+    #             "amount": 100.00,
+    #             "category": "Food",
+    #             "date": "3/5/2025",
+    #             "description": "Hello testing"
+    #         }
+    #     }
+    # )
 
 
 class ListTransactions(BaseModel):
@@ -96,3 +85,13 @@ class UpdateTransactionModel(BaseModel):
 class TransactionCollectionPagination(ListTransactions):
     page: int = Field(ge=1, default=1)
     has_more: bool
+
+
+class CategoryModel(BaseModel):
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    name: str = Field(...)
+    transaction_id: str = Field(...)
+
+
+class ListCategories(BaseModel):
+    categories: List[CategoryModel]

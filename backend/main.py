@@ -5,6 +5,7 @@ import uvicorn
 from config import BaseConfig
 from routers.transactions import router as transactions_router
 from routers.users import router as users_router
+from routers.categories import router as categories_router
 from fastapi.middleware.cors import CORSMiddleware
 
 settings = BaseConfig()
@@ -33,11 +34,13 @@ app.add_middleware(
 app.include_router(transactions_router,
                    prefix="/transactions", tags=["transactions"])
 app.include_router(users_router, prefix="/users", tags=["users"])
+app.include_router(categories_router, prefix="/categories",
+                   tags=["categories"])
 
 
-@app.get("/")
-async def get_root():
-    return {"Message": "Root working"}
+# @app.get("/")
+# async def get_root():
+#     return {"Message": "Root working"}
 
 
 if __name__ == "__main__":

@@ -27,16 +27,6 @@ async def add_transaction(request: Request, type: str = Form("type"), amount: fl
     return await transactions.find_one({"_id": inserted.inserted_id})
 
 
-# @router.get("/", response_description="List all transactions", response_model=ListTransactions, response_model_by_alias=False)
-# async def list_transactions(request: Request):
-#     transactions = request.app.db["transactions"]
-#     results = []
-#     cursor = transactions.find()
-#     async for document in cursor:
-#         results.append(document)
-
-#     return ListTransactions(transactions=results)
-
 @router.get("/", response_description="List all transactions, paginated", response_model=TransactionCollectionPagination, response_model_by_alias=False,)
 async def list_transactions(request: Request, page: int = 1, limit: int = TRANSACTIONS_PER_PAGE,):
     transactions = request.app.db["transactions"]
